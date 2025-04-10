@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # コードの書き方
 
 - コードを書くときは、関数コメントを日本語で書いてください。
