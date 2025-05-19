@@ -17,6 +17,46 @@ CSV の読み込みは、ファイル量が膨大な可能性もあるため、
 -   .env ファイル
 -   APIキー、トークン、認証情報を含むすべてのファイル
 
+## シークレット管理
+
+### Bitwarden Secret (bws) の使用
+
+プロジェクト内のシークレット情報（APIキー、トークン、秘密鍵など）は、すべてBitwarden Secret (bws) を使用して管理します。
+
+- **原則**
+  - シークレット情報をソースコードに直接記述しない
+  - 環境変数として読み込む場合も、.envファイルではなくbwsを使用する
+  - シークレット情報を含むファイルは.gitignoreに追加する
+  - **bwsコマンドを実行する際は、必ずユーザーに確認を取ること**
+
+- **使用方法**
+  ```bash
+  # シークレットの取得（必ずユーザーに実行の確認を取ること）
+  export HELIUS_RPC_URL=$(bws secret get HELIUS_RPC_URL)
+  
+  # スクリプト内での使用
+  helius_rpc_url = os.environ.get("HELIUS_RPC_URL")
+  ```
+
+- **シークレット一覧**
+  | シークレットID | 用途 | 備考 |
+  |--------------|------|------|
+  | POLYGON_API_KEY | Polygon ブロックチェーンAPI | ブロックチェーンデータ取得用 |
+  | ETHERSCAN_API_KEY | Etherscan API | イーサリアムブロックチェーン情報取得用 |
+  | OPENAI_API_KEY | OpenAI API | AI機能実装用 |
+  | ANCHOR_WALLET | Solana ウォレット設定 | Anchorフレームワーク用ウォレットパス |
+  | ANCHOR_PROVIDER_URL | Solana RPC URL | Anchorフレームワーク用RPC接続先 |
+  | HELIUS_RPC_URL | Helius Solana RPC | Solanaブロックチェーン接続用 |
+  | SOLANA_DEV_MNEMONIC | Solana開発用ニーモニック | 開発環境用ウォレット生成用 |
+  | ALCHEMY_KEY | Alchemy API | ブロックチェーンインフラ接続用 |
+
+- **注意事項**
+  - シークレットの値自体をコードやコメント、ログに記載しないこと
+  - シークレットIDのみを参照すること
+  - 新しいシークレットを追加する場合は、上記の表に追記すること
+  - **bwsコマンドを含むスクリプトやコマンドを実行する前に、必ずユーザーに確認を取ること**
+  - **execute_commandツールでbwsコマンドを実行する場合は、必ず`requires_approval: true`を設定すること**
+
 ## セキュリティ対策
 
 -   機密ファイルを絶対にコミットしない
@@ -80,4 +120,3 @@ Git フックを用いた品質担保のために、**Husky を導入**する。
 
 # ✋ 注意
 これらのルールはプロジェクト全体で一貫して適用されるべきものであり、新規ファイル作成やリファクタリング時にも必ず遵守すること。
-
